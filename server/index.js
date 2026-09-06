@@ -23,12 +23,23 @@ app.use('/api/elections', electionRoutes);
 app.use('/api/vote', voteRoutes);
 app.use('/api/admin', adminRoutes);
 
-// MongoDB + Server start
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB Connected');
-    app.listen(process.env.PORT || 5000, () =>
-      console.log(`🚀 Server running on port ${process.env.PORT || 5000}`)
-    );
   })
-  .catch(err => console.error('❌ MongoDB Error:', err));
+  .catch(err => {
+    console.error('❌ MongoDB Error:', err);
+  });
+
+// Start server locally
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
+}
+
+// Export Express app for Vercel
+module.exports = app;
